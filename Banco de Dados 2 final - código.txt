@@ -1,0 +1,87 @@
+create database belezaLimitada;
+
+use belezaLimitada;
+
+create table veiculos(
+	veiculoID int primary key auto_increment,
+	modelo varchar(255)
+);
+
+create table regioes(
+	regiaoID int primary key auto_increment,
+	localizacao varchar(255),
+	tamanho float
+);
+
+create table pontosEstrategicos(
+	pontoID int primary key auto_increment,
+	regiaoID int,
+	localizacao varchar(255),
+	foreign key (regiaoID) references regioes(regiaoID)
+);
+
+create table produtos(
+	produtoID int primary key auto_increment,
+	nome varchar(255),
+	estoque int,
+	ativo bit
+);
+
+create table vendedores(
+	vendedorID int primary key auto_increment,
+	nome varchar(255),
+	regiaoID int,
+	veiculoID int,
+	foreign key (regiaoID) references regioes(regiaoID),
+	foreign key (veiculoID) references veiculos(veiculoID)
+);
+
+create table notaFiscal(
+	notaID int primary key auto_increment,
+	vendedorID int,
+	cliente varchar(255),
+	foreign key (vendedorID) references vendedores(vendedorID)
+);
+
+create table vendas(
+	notaID int,
+	produto int,
+	foreign key (notaID) references notaFiscal(notaID),
+    foreign key (produto) references produtos(produtoID)
+);
+
+/*Hiroshi 2022*/
+
+insert into veiculos(modelo) values ('corsa');
+insert into veiculos(modelo) values ('gurgel');
+insert into veiculos(modelo) values ('bugatti veiron');
+
+insert into regioes(localizacao, tamanho) values('rua amandino de souza', 23.34);
+insert into regioes(localizacao, tamanho) values('rua augusto goulart', 20.5);
+insert into regioes(localizacao, tamanho) values('avenida água de haia', 22.33);
+
+insert into pontosEstrategicos(regiaoID, localizacao) values (1, 'bizantino de braga');
+insert into pontosEstrategicos(regiaoID, localizacao) values (1, 'sanana the banana');
+insert into pontosEstrategicos(regiaoID, localizacao) values (3, 'nossa senhora não aguento mais inventar nome de rua');
+
+insert into produtos(nome, estoque, ativo) values ('desenfetante de rosto', 20, 1);
+insert into produtos(nome, estoque, ativo) values ('bombril de limpeza labial', 13, 1);
+insert into produtos(nome, estoque, ativo) values ('sabão sabor seia supimpa', 0, 0);
+
+insert into vendedores(nome, regiaoID, veiculoID) values ('botelho kunavara', 1, 1);
+insert into vendedores(nome, regiaoID, veiculoID) values ('paula tejante', 2, 2);
+insert into vendedores(nome, regiaoID, veiculoID) values ('tanaka traka', 2, 3);
+
+insert into notaFiscal(vendedorID, cliente) values (2, 'power guido');
+insert into notaFiscal(vendedorID, cliente) values (2, 'cuca beludo');
+insert into notaFiscal(vendedorID, cliente) values (3, 'jacinto leite akino reigo');
+
+insert into vendas(notaID, produto) values (1, 1);
+insert into vendas(notaID, produto) values (2, 2);
+insert into vendas(notaID, produto) values (3, 2);
+
+/*Hiroshi 2022*/
+
+select notaFiscal.cliente, notaFiscal.notaID, vendedores.vendedorID from notaFiscal inner join vendedores on notaFiscal.vendedorID = vendedores.vendedorID;
+select modelo from veiculos;
+select nome from vendedores where exists(select modelo from veiculos where veiculoID < 3)
